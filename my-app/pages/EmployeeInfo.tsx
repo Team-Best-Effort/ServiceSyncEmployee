@@ -25,7 +25,7 @@ const EmployeeInfo: React.FC<EmployeeInfoProps> = ({ employee, onBackPress }) =>
       <View style={styles.profileSection}>
         <View style={styles.avatarContainer}>
           <Image 
-            source={require('./assets/default-avatar.png')}
+            source={require('../assets/favicon.png')}
             style={styles.avatar}
           />
         </View>
