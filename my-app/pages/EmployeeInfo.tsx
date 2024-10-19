@@ -44,7 +44,6 @@ const EmployeeInfo: React.FC<EmployeeInfoProps> = ({ employee, onBackPress }) =>
       </View>
       
       <View style={styles.navbar}>
-        {/* Add your navbar icons here */}
         <TouchableOpacity style={styles.navItem}>
           <Text style={styles.navIcon}>🏠</Text>
         </TouchableOpacity>
@@ -79,12 +78,12 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
   },
   profileSection: {
     alignItems: 'center',
-    marginVertical: 20,
+    marginVertical: 15,
   },
   avatarContainer: {
     width: 100,
