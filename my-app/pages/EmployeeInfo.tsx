@@ -123,11 +123,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     position: 'absolute',
-    bottom: 0,
+    bottom: 25,
     left: 0,
     right: 0,
     backgroundColor: '#1C1C1C',
-    paddingVertical: 10,
+    paddingVertical: 20,
   },
   navItem: {
     alignItems: 'center',
