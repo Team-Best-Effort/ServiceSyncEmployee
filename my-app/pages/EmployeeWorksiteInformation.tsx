@@ -27,55 +27,44 @@ const EmployeeWorksiteInformation: React.FC<EmployeeWorksiteInformationProps> = 
   onClockIn,
 }) => {
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
       <ScrollView>
-        <View>
-          <Text>Worksite Information</Text>
-        </View>
+        <Text style={styles.header}>Worksite Information</Text>
 
-        <View>
-          <Text>Location Details</Text>
-          <View>
-            <Image 
-              source={require('../assets/icon.png')} 
-              resizeMode="cover"
-            />
-            <View>
-              <Text>Address</Text>
-              <Text>{address.street}</Text>
-              <Text>
-                {`${address.city}, ${address.state}, ${address.zipCode}`}
-              </Text>
-            </View>
+        <Text style={styles.sectionTitle}>Location Details</Text>
+        <View style={styles.locationContainer}>
+          <Image 
+            source={require('../assets/icon.png')} 
+            resizeMode="cover"
+            style={{ width: 100, height: 100 }} // Adjust size as needed
+          />
+          <View style={styles.locationTextContainer}>
+            <Text style={styles.text}>Address</Text>
+            <Text style={styles.text}>{address.street}</Text>
+            <Text style={styles.text}>
+              {`${address.city}, ${address.state}, ${address.zipCode}`}
+            </Text>
           </View>
         </View>
 
+        <Text style={styles.sectionTitle}>Tasks to be Completed</Text>
         <View>
-          <Text>Tasks to be Completed</Text>
-          <View>
-            {tasks.map((task) => (
-              <Text key={task.id}>
-                {`${task.id}. ${task.title}`}
-              </Text>
-            ))}
-          </View>
+          {tasks.map((task) => (
+            <Text style={styles.taskText} key={task.id}>
+              {`${task.id}. ${task.title}`}
+            </Text>
+          ))}
         </View>
 
-        <View>
-          <Text>Deadline Date</Text>
-          <Text>{deadline}</Text>
-        </View>
+        <Text style={styles.sectionTitle}>Deadline Date</Text>
+        <Text style={styles.deadlineText}>{deadline}</Text>
 
-        <TouchableOpacity 
-          onPress={onGetDirections}
-        >
-          <Text >Get Directions</Text>
+        <TouchableOpacity style={styles.button} onPress={onGetDirections}>
+          <Text style={styles.buttonText}>Get Directions</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
-          onPress={onClockIn}
-        >
-          <Text>Clock In to Site</Text>
+        <TouchableOpacity style={styles.button} onPress={onClockIn}>
+          <Text style={styles.buttonText}>Clock In to Site</Text>
         </TouchableOpacity>
       </ScrollView>
 
@@ -98,6 +87,64 @@ const EmployeeWorksiteInformation: React.FC<EmployeeWorksiteInformationProps> = 
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#2C2C2C',
+    paddingHorizontal: 20,
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    color: 'white', 
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    paddingBottom: 5,
+    color: 'white', 
+  },
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  locationTextContainer: {
+    marginLeft: 10,
+  },
+  text: {
+    color: 'white', 
+  },
+  taskText: {
+    fontSize: 16,
+    marginLeft: 15,
+    lineHeight: 24,
+    color: 'white', 
+  },
+  deadlineText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginVertical: 10,
+    color: 'white', 
+  },
+  button: {
+    backgroundColor: '#4CAF50',
+    borderRadius: 10,
+    paddingVertical: 15,
+    marginVertical: 10,
+    alignItems: 'center',
+  },
+  buttonText: {
+    fontSize: 18,
+    color: 'white',
+    fontWeight: 'bold',
+  },
   navbar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
