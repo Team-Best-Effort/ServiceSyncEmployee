@@ -6,53 +6,39 @@ const emails = [
     subject: 'Meeting Reminder',
     preview: "Don't forget about the meeting scheduled for tomorrow at 10 AM.",
     receivedTime: '9:00 AM',
+    sender: 'John Doe',
+    sentDate: 'November 2, 2024',
+    body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\n\nExcepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
     profilePic: './icons/image.png',
-  },
-  {
-    subject: 'Project Update',
-    preview: 'The project update meeting has been rescheduled to next week.',
-    receivedTime: '3:00 PM',
-    profilePic: './icons/image.png',
-  },
-  {
-    subject: 'Weekly Report',
-    preview: 'Your weekly report is ready for review.',
-    receivedTime: '10:00 AM',
-    profilePic: './icons/image.png',
-  },
-  {
-    subject: 'New Task Assigned',
-    preview: 'You have been assigned a new task in the project.',
-    receivedTime: '5:00 PM',
-    profilePic: './icons/image.png',
-  },
+  }
 ];
 
-const EmailInbox: React.FC = () => {
+const Email: React.FC = () => {
+  const email = emails[0];
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headertext}>Inbox</Text>
+        <Text style={styles.headertext}>{email.subject}</Text>
       </View>
 
       <ScrollView style={styles.emailList}>
-        {emails.map((email, index) => (
-          <View key={index} style={styles.emailHeader}>
-            <View style={styles.pfpContainer}>
-              <View style={styles.pfpOutline}>
-                <Image source={{ uri: email.profilePic }} style={styles.pfp} />
-              </View>
+        <View style={styles.emailHeader}>
+          <View style={styles.pfpContainer}>
+            <View style={styles.pfpOutline}>
+              <Image source={{ uri: email.profilePic }} style={styles.pfp} />
             </View>
-            <View style={styles.emailContent}>
-              <View style={styles.subjectRow}>
-                <Text style={styles.subject}>{`${email.subject}`}</Text>
-                <Text style={styles.receivedTime}>{`${email.receivedTime}`}</Text>
-              </View>
-              <Text style={styles.preview}>{`${email.preview}`}</Text>
-            </View>
-            <View style={styles.line} />
           </View>
-        ))}
+          <View style={styles.emailContent}>
+            <View style={styles.subjectRow}>
+              <Text style={styles.sender}>{email.sender}</Text>
+              <Text style={styles.receivedTime}>{email.receivedTime}</Text>
+            </View>
+            <Text style={styles.sentDate}>{email.sentDate}</Text>
+            <Text style={styles.body}>{email.body}</Text>
+            <Text style={styles.preview}>{email.preview}</Text>
+          </View>
+        </View>
       </ScrollView>
 
       <View style={styles.navbar}>
@@ -83,7 +69,6 @@ const styles = StyleSheet.create({
     borderBottomColor: 'white',
     marginBottom: 1,
     paddingBottom: 1,
-    alignItems: 'center',
   },
   headertext: {
     fontSize: 24,
@@ -127,14 +112,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center', 
   },
-  subject: {
-    fontSize: 18,
+  sender: {
+    fontSize: 16,
     fontWeight: 'bold',
     color: 'white',
   },
   receivedTime: {
     fontSize: 14,
     color: 'white',
+  },
+  sentDate: {
+    fontSize: 14,
+    color: 'lightgray',
+    marginTop: 2,
+  },
+  body: {
+    fontSize: 16,
+    color: 'lightgray',
+    marginTop: 4,
   },
   preview: {
     fontSize: 16,
@@ -168,4 +163,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EmailInbox;
+export default Email;
