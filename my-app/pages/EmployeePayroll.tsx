@@ -13,7 +13,6 @@ const EmployeePayrollScreen = () => {
     Alert.alert('Tracking Started', 'Payroll tracking has started.');
   };
 
-  // Function to handle ending payroll tracking
   const handleEndTracking = async () => {
     if (!startTime) return;
 
