@@ -5,6 +5,8 @@ import axios from 'axios';
 const EmployeePayrollScreen = () => {
   const [tracking, setTracking] = useState(false);
   const [startTime, setStartTime] = useState<string | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [tokenExpiration, setTokenExpiration] = useState<number | null>(null);
 
   const handleStartTracking = () => {
     const currentTime = new Date().toISOString().split('T')[1].split('.')[0] + "-08:00";
@@ -12,6 +14,47 @@ const EmployeePayrollScreen = () => {
     setTracking(true);
     Alert.alert('Tracking Started', 'Payroll tracking has started.');
   };
+ 
+  //Function to retrieve and refresh the access token.
+  const getAccessToken = async () => {
+    try {
+      // Check if token is expired or not present
+      if (!accessToken || tokenExpired()) {
+        const response = await axios.post('https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer', {
+          grant_type: 'refresh_token',
+          refresh_token: '<your_refresh_token>',
+          client_id: '<your_client_id>',
+          client_secret: '<your_client_secret>',
+        }, {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        });
+
+        const newAccessToken = response.data.access_token;
+        setAccessToken(newAccessToken);
+        
+        // Set token expiration to 60 minutes from now
+        const expiresIn = 60 * 60 * 1000;
+        setTokenExpiration(Date.now() + expiresIn);
+
+        return newAccessToken;
+      }
+
+      return accessToken;
+    } catch (error) {
+      console.error('Error refreshing token', error);
+      Alert.alert('Error', 'Unable to refresh access token.');
+      return null;
+    }
+  };
+
+
+  const tokenExpired = async () => {
+    //Logic for checking if token is expired.
+  }
+    
+  }
 
   const handleEndTracking = async () => {
     if (!startTime) return;
