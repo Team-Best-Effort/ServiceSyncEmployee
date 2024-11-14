@@ -49,10 +49,11 @@ const EmployeePayrollScreen = () => {
     }
   };
 
+//Checks if 60 minutes have passed to set token as expired.
+  const tokenExpired = () => {
+    return tokenExpiration ? Date.now() > tokenExpiration : true;
+  };
 
-  const tokenExpired = async () => {
-    //Logic for checking if token is expired.
-  }
     
   }
 
