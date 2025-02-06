@@ -8,15 +8,24 @@ interface Employee {
 }
 
 interface EmployeeInfoProps {
-  employee: Employee;
-  onBackPress: () => void;
+  navigation: any;
 }
 
-const EmployeeInfo: React.FC<EmployeeInfoProps> = ({ employee, onBackPress }) => {
+const EmployeeInfo: React.FC<EmployeeInfoProps> = ({ navigation }) => {
+
+  const employee: Employee = {
+    name: 'Test Test',
+    phoneNumber: '916-123-4567',
+    email: 'test.test@test.com',
+  };
+
+  const handleBackPress = () => {
+    navigation.goBack();
+  };
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={onBackPress}>
+        <TouchableOpacity onPress={handleBackPress}>
           <Text style={styles.backButton}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Employee Info</Text>
@@ -44,16 +53,16 @@ const EmployeeInfo: React.FC<EmployeeInfoProps> = ({ employee, onBackPress }) =>
       </View>
       
       <View style={styles.navbar}>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeHome')}>
           <Text style={styles.navIcon}>🏠</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeWorksiteInformation')}>
           <Text style={styles.navIcon}>💼</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>
           <Text style={styles.navIcon}>📅</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeInfo')}>
           <Text style={styles.navIcon}>👤</Text>
         </TouchableOpacity>
       </View>
