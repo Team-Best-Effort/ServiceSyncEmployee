@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import EmployeeHome from './pages/EmployeeHome';
 import EmployeeInfo from './pages/EmployeeInfo';
+import EmployeeLogin from './pages/EmployeeLogin'
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
@@ -41,6 +42,7 @@ const App: React.FC = () => {
           <Stack.Screen name="EmployeeHome" component={EmployeeHome} />
           <Stack.Screen name="EmployeeInfo" component={EmployeeInfo} />
           <Stack.Screen name="EmployeeWorksiteInformation" component={EmployeeWorksiteInformation} />
+          <Stack.Screen name="EmployeeLogin" component={EmployeeLogin} />
         </Stack.Navigator>
       </NavigationContainer>
   );
