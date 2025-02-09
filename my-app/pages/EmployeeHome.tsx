@@ -8,8 +8,9 @@ interface EmployeeHomeProps {
 }
 const EmployeeHome: React.FC<EmployeeHomeProps> = ({navigation}) => {
   return (
+    {/*Today's Tasks */}
     <SafeAreaView style={styles.container}>
-    <Text style={styles.headertext}>Todays Task's</Text>
+    <Text style={styles.headertext}>Today's Tasks</Text>
     
     <View style={styles.taskContainer}>
       <View style={styles.dateContainer}>
@@ -27,6 +28,31 @@ const EmployeeHome: React.FC<EmployeeHomeProps> = ({navigation}) => {
         </View>
       </View>
     </View>
+      {/* Upcoming Schedule */}
+      <View style={styles.header}>
+          <Text style={styles.sectionTitle}>Upcoming Schedule</Text>
+          <TouchableOpacity>
+            <Text style={styles.linkText}>View Schedule</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Upcoming Schedule Events */}
+        <View style={styles.eventContainer}>
+          <Text style={styles.eventTitle}>Visit Jobsite XYZ</Text>
+          <Text style={styles.eventDescription}>Give general description of tasks</Text>
+          <Text style={styles.eventTime}>Tomorrow, 9:00AM</Text>
+        </View>
+
+        <View style={styles.eventContainer}>
+          <Text style={styles.eventTitle}>Meeting</Text>
+          <Text style={styles.eventDescription}>Meeting Description with Person</Text>
+          <Text style={styles.eventTime}>Friday, 1:00PM</Text>
+        </View>
+
+        {/* Payroll Button */}
+        <TouchableOpacity style={styles.payrollButton}>
+          <Text style={styles.payrollText}>Payroll</Text>
+        </TouchableOpacity>
 
     <View style={styles.navbar}>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeHome')}>
@@ -43,6 +69,7 @@ const EmployeeHome: React.FC<EmployeeHomeProps> = ({navigation}) => {
         </TouchableOpacity>
       </View>
     </SafeAreaView>
+    
   );
 };
 
@@ -101,6 +128,44 @@ const styles = StyleSheet.create({
   },
   task: {
     fontSize: 16,
+    color: 'white',
+  },
+  eventContainer: {
+    backgroundColor: '#3C3C3C',
+    borderRadius: 10,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: 'green',
+    marginBottom: 10,
+  },
+  eventTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+    marginBottom: 5,
+  },
+  eventDescription: {
+    fontSize: 14,
+    color: 'white',
+    marginBottom: 8,
+  },
+  eventTime: {
+    fontSize: 12,
+    color: 'gray',
+  },
+  payrollButton: {
+    width: '100%',
+    paddingVertical: 15,
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: 'green',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  payrollText: {
+    fontSize: 24,
     color: 'white',
   },
   navbar: {
