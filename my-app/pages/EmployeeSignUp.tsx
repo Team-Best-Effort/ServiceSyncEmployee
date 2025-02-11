@@ -8,8 +8,7 @@ import {
   Alert,
 } from 'react-native';
 // Import Firebase 
-import firebase from 'firebase/app';
-import 'firebase/auth';
+import auth from '@react-native-firebase/auth';
 
 interface Props {
   navigation: any;
