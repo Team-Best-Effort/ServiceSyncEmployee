@@ -1,34 +1,59 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
-
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
+import auth from '@react-native-firebase/auth';
 
 interface EmployeeHomeProps {
-
   navigation: any;
 }
-const EmployeeHome: React.FC<EmployeeHomeProps> = ({navigation}) => {
+
+const EmployeeHome: React.FC<EmployeeHomeProps> = ({ navigation }) => {
+  useEffect(() => {
+    const unsubscribe = auth().onAuthStateChanged(user => {
+      if (!user) {
+        // If the user is not logged in, navigate to the login screen.
+        navigation.navigate('EmployeeLogin');
+      }
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  // Logout functionality
+  const handleLogout = async () => {
+    try {
+      await auth().signOut();
+      navigation.navigate('EmployeeLogin');
+    } catch (error: any) {
+      Alert.alert('Logout Error', error.message);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-    <Text style={styles.headertext}>Todays Task's</Text>
-    
-    <View style={styles.taskContainer}>
-      <View style={styles.dateContainer}>
-        <Text style={styles.dateNumber}>15</Text> 
-        <Text style={styles.dateDay}>Monday</Text> 
-      </View>
-      <View style={styles.line} />
+      {/* Logout Button at the Top Left */}
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Text style={styles.logoutText}>Logout</Text>
+      </TouchableOpacity>
 
-      <View style={styles.tasksContainer}>
-        <Text style={styles.location}>Location: Office</Text>
-        <View style={styles.taskList}>
-          <Text style={styles.task}>• Task 1</Text>
-          <Text style={styles.task}>• Task 2</Text>
-          <Text style={styles.task}>• Task 3</Text>
+      <Text style={styles.headertext}>Todays Task's</Text>
+      
+      <View style={styles.taskContainer}>
+        <View style={styles.dateContainer}>
+          <Text style={styles.dateNumber}>15</Text> 
+          <Text style={styles.dateDay}>Monday</Text> 
+        </View>
+        <View style={styles.line} />
+
+        <View style={styles.tasksContainer}>
+          <Text style={styles.location}>Location: Office</Text>
+          <View style={styles.taskList}>
+            <Text style={styles.task}>• Task 1</Text>
+            <Text style={styles.task}>• Task 2</Text>
+            <Text style={styles.task}>• Task 3</Text>
+          </View>
         </View>
       </View>
-    </View>
 
-    <View style={styles.navbar}>
+      <View style={styles.navbar}>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeHome')}>
           <Text style={styles.navIcon}>🏠</Text>
         </TouchableOpacity>
@@ -51,12 +76,26 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#2C2C2C',
   },
-  headertext:{
+  logoutButton: {
+    position: 'absolute',
+    top: 20, 
+    left: 16,
+    backgroundColor: '#4CAF50',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 5,
+    zIndex: 1, 
+  },
+  logoutText: {
+    color: 'white',
+    fontSize: 14,
+  },
+  headertext: {
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
     margin: 16,
-    marginTop: 60
+    marginTop: 60,
   },
   text: {
     fontSize: 24,
@@ -72,7 +111,7 @@ const styles = StyleSheet.create({
     padding: 16,
     alignItems: 'center',
     borderWidth: 2, 
-    borderColor: 'green'
+    borderColor: 'green',
   },
   dateContainer: {
     flex: 1,
@@ -125,7 +164,6 @@ const styles = StyleSheet.create({
     height: '100%', 
     backgroundColor: 'white', 
   },
-
 });
 
 export default EmployeeHome;

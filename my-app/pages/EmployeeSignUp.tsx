@@ -15,27 +15,32 @@ interface Props {
   navigation: any;
 }
 
-const EmployeeLogin: React.FC<Props> = ({ navigation }) => {
+const EmployeeSignUp: React.FC<Props> = ({ navigation }) => {
   const [username, setUsername] = useState(''); // username will be the email
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleLogin = () => {
-    // Sign in using Firebase Auth
+  const handleSignUp = () => {
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+    // Create a new user using Firebase Auth
     firebase
       .auth()
-      .signInWithEmailAndPassword(username, password)
+      .createUserWithEmailAndPassword(username, password)
       .then(() => {
-        Alert.alert('Login Successful', 'Welcome!');
-        navigation.navigate('EmployeeHome');
+        Alert.alert('Registration Successful', 'You can now log in');
+        navigation.navigate('EmployeeLogin');
       })
       .catch((error) => {
-        Alert.alert('Login Failed', error.message);
+        Alert.alert('Registration Failed', error.message);
       });
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.header}>Login</Text>
+      <Text style={styles.header}>Sign Up</Text>
 
       <Text style={styles.label}>Username (Email)</Text>
       <TextInput
@@ -58,16 +63,26 @@ const EmployeeLogin: React.FC<Props> = ({ navigation }) => {
         onChangeText={setPassword}
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
+      <Text style={styles.label}>Confirm Password</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Confirm your password"
+        placeholderTextColor="#aaa"
+        secureTextEntry
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+      />
+
+      <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+        <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
 
-      {/* Button to navigate to the Sign Up screen */}
+      {/* Button to navigate back to the Login screen */}
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('EmployeeSignUp')}
+        onPress={() => navigation.navigate('EmployeeLogin')}
       >
-        <Text style={styles.buttonText}>Sign Up</Text>
+        <Text style={styles.buttonText}>Back to Login</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -113,4 +128,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EmployeeLogin;
+export default EmployeeSignUp;
