@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView, ScrollView, Alert } from 'react-native';
 
 interface Task {
   id: number;
@@ -7,25 +7,39 @@ interface Task {
 }
 
 interface EmployeeWorksiteInformationProps {
-  address: {
-    street: string;
-    city: string;
-    state: string;
-    zipCode: string;
-  };
-  tasks: Task[];
-  deadline: string;
-  onGetDirections: () => void;
-  onClockIn: () => void;
+  navigation: any;
 }
 
-const EmployeeWorksiteInformation: React.FC<EmployeeWorksiteInformationProps> = ({
-  address,
-  tasks,
-  deadline,
-  onGetDirections,
-  onClockIn,
-}) => {
+const EmployeeWorksiteInformation: React.FC<EmployeeWorksiteInformationProps> = ({navigation}) => {
+
+  const worksiteData = {
+    address: {
+      street: '1234 Example Street',
+      city: 'Vacaville',
+      state: 'CA',
+      zipCode: '94533',
+    },
+    tasks: [
+      { id: 1, title: 'Install new equipment' },
+      { id: 2, title: 'Test system functionality' },
+      { id: 3, title: 'Document installation' },
+    ],
+    deadline: 'December 31, 2024',
+  };
+
+  const handleGetDirections = () => {
+    console.log('Getting directions...');
+    Alert.alert('Get Directions', 'Navigating to directions...');
+  };
+
+  const handleClockIn = () => {
+    console.log('Clocking in...');
+    Alert.alert('Clock In', 'You have clocked in successfully.');
+  };
+
+  const { address, tasks, deadline } = worksiteData;
+
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -59,26 +73,26 @@ const EmployeeWorksiteInformation: React.FC<EmployeeWorksiteInformationProps> = 
         <Text style={styles.sectionTitle}>Deadline Date</Text>
         <Text style={styles.deadlineText}>{deadline}</Text>
 
-        <TouchableOpacity style={styles.button} onPress={onGetDirections}>
+        <TouchableOpacity style={styles.button} onPress={handleGetDirections}>
           <Text style={styles.buttonText}>Get Directions</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={onClockIn}>
+        <TouchableOpacity style={styles.button} onPress={handleClockIn}>
           <Text style={styles.buttonText}>Clock In to Site</Text>
         </TouchableOpacity>
       </ScrollView>
 
       <View style={styles.navbar}>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeHome')}>
           <Text style={styles.navIcon}>🏠</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeWorksiteInformation')}>
           <Text style={styles.navIcon}>💼</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>
           <Text style={styles.navIcon}>📅</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeInfo')}>
           <Text style={styles.navIcon}>👤</Text>
         </TouchableOpacity>
       </View>

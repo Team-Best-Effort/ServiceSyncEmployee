@@ -1,7 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 
-const EmployeeHome: React.FC = () => {
+
+interface EmployeeHomeProps {
+
+  navigation: any;
+}
+const EmployeeHome: React.FC<EmployeeHomeProps> = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
     <Text style={styles.headertext}>Todays Task's</Text>
@@ -23,17 +28,17 @@ const EmployeeHome: React.FC = () => {
       </View>
     </View>
 
-      <View style={styles.navbar}>
-        <TouchableOpacity style={styles.navItem}>
+    <View style={styles.navbar}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeHome')}>
           <Text style={styles.navIcon}>🏠</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeWorksiteInformation')}>
           <Text style={styles.navIcon}>💼</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeLogin')}>
           <Text style={styles.navIcon}>📅</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeInfo')}>
           <Text style={styles.navIcon}>👤</Text>
         </TouchableOpacity>
       </View>

@@ -1,38 +1,50 @@
 import React from 'react';
 import EmployeeWorksiteInformation from './pages/EmployeeWorksiteInformation';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import EmployeeHome from './pages/EmployeeHome';
+import EmployeeInfo from './pages/EmployeeInfo';
+import EmployeeLogin from './pages/EmployeeLogin'
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyAv2-2kRLd0WgSDWZy8FHCZ_tV0C8-qZmk",
+  authDomain: "fir-for-mobile.firebaseapp.com",
+  projectId: "fir-for-mobile",
+  storageBucket: "fir-for-mobile.firebasestorage.app",
+  messagingSenderId: "439213772497",
+  appId: "1:439213772497:web:dbd8c4b890020cf30bfff0",
+  measurementId: "G-V01HZ2PJHG"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+// Initialize Firebase Authentication and get a reference to the service
+const auth = getAuth(app);
 
 const App: React.FC = () => {
-  const worksiteData = {
-    address: {
-      street: '1234 Example Street',
-      city: 'Vacaville',
-      state: 'CA',
-      zipCode: '94533',
-    },
-    tasks: [
-      { id: 1, title: 'Install new equipment' },
-      { id: 2, title: 'Test system functionality' },
-      { id: 3, title: 'Document installation' },
-    ],
-    deadline: 'December 31, 2024',
-  };
+ 
+  const Stack = createStackNavigator();
 
-  const handleGetDirections = () => {
-    console.log('getting directions');
-  };
-
-  const handleClockIn = () => {
-    console.log('clocking in');
-  };
 
   return (
-    <EmployeeWorksiteInformation
-      address={worksiteData.address}
-      tasks={worksiteData.tasks}
-      deadline={worksiteData.deadline}
-      onGetDirections={handleGetDirections}
-      onClockIn={handleClockIn}
-    />
+
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="EmployeeHome" screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="EmployeeHome" component={EmployeeHome} />
+          <Stack.Screen name="EmployeeInfo" component={EmployeeInfo} />
+          <Stack.Screen name="EmployeeWorksiteInformation" component={EmployeeWorksiteInformation} />
+          <Stack.Screen name="EmployeeLogin" component={EmployeeLogin} />
+        </Stack.Navigator>
+      </NavigationContainer>
   );
 };
 
