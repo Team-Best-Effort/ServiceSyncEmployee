@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { auth } from '../firebase'; 
 
 interface Employee {
   name: string;
@@ -12,16 +13,18 @@ interface EmployeeInfoProps {
 }
 
 const EmployeeInfo: React.FC<EmployeeInfoProps> = ({ navigation }) => {
+  const currentUser = auth.currentUser;
 
   const employee: Employee = {
-    name: 'Test Test',
-    phoneNumber: '916-123-4567',
-    email: 'test.test@test.com',
+    name: currentUser?.displayName || currentUser?.email || 'Guest User',
+    phoneNumber: currentUser?.phoneNumber || 'No phone number provided',
+    email: currentUser?.email || 'No email provided',
   };
 
   const handleBackPress = () => {
     navigation.goBack();
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -30,7 +33,7 @@ const EmployeeInfo: React.FC<EmployeeInfoProps> = ({ navigation }) => {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Employee Info</Text>
       </View>
-      
+
       <View style={styles.profileSection}>
         <View style={styles.avatarContainer}>
           <Image 
@@ -40,7 +43,7 @@ const EmployeeInfo: React.FC<EmployeeInfoProps> = ({ navigation }) => {
         </View>
         <Text style={styles.employeeName}>{employee.name}</Text>
       </View>
-      
+
       <View style={styles.infoCard}>
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Phone Number</Text>
@@ -51,7 +54,7 @@ const EmployeeInfo: React.FC<EmployeeInfoProps> = ({ navigation }) => {
           <Text style={styles.infoValue}>{employee.email}</Text>
         </View>
       </View>
-      
+
       <View style={styles.navbar}>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeHome')}>
           <Text style={styles.navIcon}>🏠</Text>

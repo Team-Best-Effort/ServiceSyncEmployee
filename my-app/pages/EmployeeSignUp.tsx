@@ -7,8 +7,8 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-// Import Firebase 
-import auth from '@react-native-firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
 
 interface Props {
   navigation: any;
@@ -24,10 +24,7 @@ const EmployeeSignUp: React.FC<Props> = ({ navigation }) => {
       Alert.alert('Error', 'Passwords do not match');
       return;
     }
-    // Create a new user using Firebase Auth
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(username, password)
+    createUserWithEmailAndPassword(auth, username, password)
       .then(() => {
         Alert.alert('Registration Successful', 'You can now log in');
         navigation.navigate('EmployeeLogin');

@@ -7,8 +7,8 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-// Import Firebase 
-import auth from '@react-native-firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';  
 
 interface Props {
   navigation: any;
@@ -19,10 +19,7 @@ const EmployeeLogin: React.FC<Props> = ({ navigation }) => {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    // Sign in using Firebase Auth
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(username, password)
+    signInWithEmailAndPassword(auth, username, password)
       .then(() => {
         Alert.alert('Login Successful', 'Welcome!');
         navigation.navigate('EmployeeHome');
