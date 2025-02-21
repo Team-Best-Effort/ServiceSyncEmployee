@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView, ScrollView, Alert, Linking } from 'react-native';
 
 interface Task {
   id: number;
@@ -14,10 +14,10 @@ const EmployeeWorksiteInformation: React.FC<EmployeeWorksiteInformationProps> = 
 
   const worksiteData = {
     address: {
-      street: '1234 Example Street',
-      city: 'Vacaville',
+      street: '1 Apple Park Way',
+      city: 'Cupertino',
       state: 'CA',
-      zipCode: '94533',
+      zipCode: '95014',
     },
     tasks: [
       { id: 1, title: 'Install new equipment' },
@@ -28,13 +28,13 @@ const EmployeeWorksiteInformation: React.FC<EmployeeWorksiteInformationProps> = 
   };
 
   const handleGetDirections = () => {
-    console.log('Getting directions...');
-    Alert.alert('Get Directions', 'Navigating to directions...');
-  };
-
-  const handleClockIn = () => {
-    console.log('Clocking in...');
-    Alert.alert('Clock In', 'You have clocked in successfully.');
+    const { street, city, state, zipCode } = worksiteData.address;
+    const formattedAddress = encodeURIComponent(`${street}, ${city}, ${state} ${zipCode}`);
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${formattedAddress}`;
+  
+    Linking.openURL(mapsUrl).catch(() => {
+      Alert.alert('Error', 'Could not open Google Maps');
+    });
   };
 
   const { address, tasks, deadline } = worksiteData;
@@ -75,10 +75,6 @@ const EmployeeWorksiteInformation: React.FC<EmployeeWorksiteInformationProps> = 
 
         <TouchableOpacity style={styles.button} onPress={handleGetDirections}>
           <Text style={styles.buttonText}>Get Directions</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button} onPress={handleClockIn}>
-          <Text style={styles.buttonText}>Clock In to Site</Text>
         </TouchableOpacity>
       </ScrollView>
 
