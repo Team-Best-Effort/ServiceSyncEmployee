@@ -26,7 +26,7 @@ const EmployeeInfo: React.FC<EmployeeInfoProps> = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} testID="employee-info-screen">
       <View style={styles.header}>
         <TouchableOpacity onPress={handleBackPress}>
           <Text style={styles.backButton}>←</Text>

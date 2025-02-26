@@ -28,8 +28,7 @@ const EmployeeHome: React.FC<EmployeeHomeProps> = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Logout Button at the Top Left */}
+    <SafeAreaView style={styles.container} testID="employee-home-screen">
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>

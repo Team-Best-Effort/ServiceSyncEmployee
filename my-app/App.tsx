@@ -6,7 +6,7 @@ import EmployeeHome from './pages/EmployeeHome';
 import EmployeeInfo from './pages/EmployeeInfo';
 import EmployeeWorksiteInformation from './pages/EmployeeWorksiteInformation';
 import EmployeeLogin from './pages/EmployeeLogin';
-import EmployeeSignUp from './pages/EmployeeSignUp'; // Make sure this is imported
+import EmployeeSignUp from './pages/EmployeeSignUp';
 
 const Stack = createStackNavigator();
 

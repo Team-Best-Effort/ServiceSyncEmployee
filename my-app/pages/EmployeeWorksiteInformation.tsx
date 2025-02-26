@@ -41,7 +41,7 @@ const EmployeeWorksiteInformation: React.FC<EmployeeWorksiteInformationProps> = 
 
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} testID="employee-work-screen">
       <ScrollView>
         <Text style={styles.header}>Worksite Information</Text>
 
