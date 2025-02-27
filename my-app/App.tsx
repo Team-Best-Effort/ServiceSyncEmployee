@@ -7,6 +7,7 @@ import EmployeeInfo from './pages/EmployeeInfo';
 import EmployeeWorksiteInformation from './pages/EmployeeWorksiteInformation';
 import EmployeeLogin from './pages/EmployeeLogin';
 import EmployeeSignUp from './pages/EmployeeSignUp';
+import EmployeeCalendar from './pages/EmployeeCalendar';
 
 const Stack = createStackNavigator();
 
@@ -19,6 +20,7 @@ const App: React.FC = () => {
         <Stack.Screen name="EmployeeWorksiteInformation" component={EmployeeWorksiteInformation} />
         <Stack.Screen name="EmployeeLogin" component={EmployeeLogin} />
         <Stack.Screen name="EmployeeSignUp" component={EmployeeSignUp} />
+        <Stack.Screen name="EmployeeCalendar" component={EmployeeCalendar}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

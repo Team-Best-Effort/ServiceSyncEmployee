@@ -7,8 +7,7 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase';
+
 
 interface Props {
   navigation: any;
@@ -19,20 +18,7 @@ const EmployeeSignUp: React.FC<Props> = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleSignUp = () => {
-    if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
-      return;
-    }
-    createUserWithEmailAndPassword(auth, username, password)
-      .then(() => {
-        Alert.alert('Registration Successful', 'You can now log in');
-        navigation.navigate('EmployeeLogin');
-      })
-      .catch((error) => {
-        Alert.alert('Registration Failed', error.message);
-      });
-  };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -69,7 +55,7 @@ const EmployeeSignUp: React.FC<Props> = ({ navigation }) => {
         onChangeText={setConfirmPassword}
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+      <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
 

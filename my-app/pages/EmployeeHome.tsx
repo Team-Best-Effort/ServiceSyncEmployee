@@ -1,35 +1,16 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
-import auth from '@react-native-firebase/auth';
 
 interface EmployeeHomeProps {
   navigation: any;
 }
 
 const EmployeeHome: React.FC<EmployeeHomeProps> = ({ navigation }) => {
-  useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged(user => {
-      if (!user) {
-        // If the user is not logged in, navigate to the login screen.
-        navigation.navigate('EmployeeLogin');
-      }
-    });
-    return unsubscribe;
-  }, [navigation]);
 
-  // Logout functionality
-  const handleLogout = async () => {
-    try {
-      await auth().signOut();
-      navigation.navigate('EmployeeLogin');
-    } catch (error: any) {
-      Alert.alert('Logout Error', error.message);
-    }
-  };
 
   return (
     <SafeAreaView style={styles.container} testID="employee-home-screen">
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+      <TouchableOpacity style={styles.logoutButton} >
         <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>
 
@@ -145,7 +126,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     position: 'absolute',
-    bottom: 25,
+    bottom: 0,
     left: 0,
     right: 0,
     backgroundColor: '#1C1C1C',

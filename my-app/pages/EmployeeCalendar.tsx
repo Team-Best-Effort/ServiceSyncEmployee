@@ -324,16 +324,16 @@ const EmployeeCalendar: React.FC<EmployeeCalendarProps> = ({ navigation }) => {
         </Modal>
       )}
       <View style={styles.navbar}>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("EmployeeHome")}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeHome')}>
           <Text style={styles.navIcon}>🏠</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("EmployeeWorksiteInformation")}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeWorksiteInformation')}>
           <Text style={styles.navIcon}>💼</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("EmployeeCalendar")}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeCalendar')}>
           <Text style={styles.navIcon}>📅</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("EmployeeInfo")}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeInfo')}>
           <Text style={styles.navIcon}>👤</Text>
         </TouchableOpacity>
       </View>
@@ -507,21 +507,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   navbar: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    position: "absolute",
-    bottom: 25,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    position: 'absolute',
+    bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: "#1C1C1C",
+    backgroundColor: '#1C1C1C',
     paddingVertical: 20,
   },
   navItem: {
-    alignItems: "center",
+    alignItems: 'center',
   },
   navIcon: {
     fontSize: 24,
-    color: "white",
+    color: 'white',
   },
   slotContainer: {
     flex: 1,

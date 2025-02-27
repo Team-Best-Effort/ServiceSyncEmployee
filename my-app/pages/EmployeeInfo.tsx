@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
-import { auth } from '../firebase'; 
 
 interface Employee {
   name: string;
@@ -13,12 +12,11 @@ interface EmployeeInfoProps {
 }
 
 const EmployeeInfo: React.FC<EmployeeInfoProps> = ({ navigation }) => {
-  const currentUser = auth.currentUser;
 
   const employee: Employee = {
-    name: currentUser?.displayName || currentUser?.email || 'Guest User',
-    phoneNumber: currentUser?.phoneNumber || 'No phone number provided',
-    email: currentUser?.email || 'No email provided',
+    name:  'Guest User',
+    phoneNumber: 'No phone number provided',
+    email: 'No email provided',
   };
 
   const handleBackPress = () => {
@@ -62,7 +60,7 @@ const EmployeeInfo: React.FC<EmployeeInfoProps> = ({ navigation }) => {
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeWorksiteInformation')}>
           <Text style={styles.navIcon}>💼</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeCalendar')}>
           <Text style={styles.navIcon}>📅</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeInfo')}>
@@ -135,7 +133,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     position: 'absolute',
-    bottom: 25,
+    bottom: 0,
     left: 0,
     right: 0,
     backgroundColor: '#1C1C1C',

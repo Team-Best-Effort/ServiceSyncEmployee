@@ -85,7 +85,7 @@ const EmployeeWorksiteInformation: React.FC<EmployeeWorksiteInformationProps> = 
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeWorksiteInformation')}>
           <Text style={styles.navIcon}>💼</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeCalendar')}>
           <Text style={styles.navIcon}>📅</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('EmployeeInfo')}>
