@@ -78,7 +78,7 @@ export default function CalendarPage() {
     setStart('');
     setEnd('');
     setAddress('');
-    setAssignedTo('');
+    setAssignedTo('test');
     setJobType('');
     setPhoneNumber('');
     setOpenAddDialog(true);
@@ -92,16 +92,14 @@ export default function CalendarPage() {
     setStart('');
     setEnd('');
     setAddress('');
-    setAssignedTo('');
+    setAssignedTo('test');
     setJobType('');
     setPhoneNumber('');
   };
 
   const handleAddTask = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!start) {
-      return;
-    }
+    if (!start) return;
     try {
       const newTaskRef = ref(db, `ServiceSync/${Date.now().toString()}`);
       const newTaskData = {
@@ -112,7 +110,7 @@ export default function CalendarPage() {
         end: end.trim() === '' ? null : end,
         createdAt: new Date().toISOString(),
         address: address.trim() || '',
-        assignedTo: assignedTo.trim() || '',
+        assignedTo: 'test',
         jobType: jobType.trim() || '',
         phoneNumber: phoneNumber.trim() || '',
       };
@@ -132,7 +130,7 @@ export default function CalendarPage() {
     setStart(task.start);
     setEnd(task.end || '');
     setAddress(task.address || '');
-    setAssignedTo(task.assignedTo || '');
+    setAssignedTo('test');
     setJobType(task.jobType || '');
     setPhoneNumber(task.phoneNumber || '');
     setOpenModifyDialog(true);
@@ -146,7 +144,7 @@ export default function CalendarPage() {
     setStart('');
     setEnd('');
     setAddress('');
-    setAssignedTo('');
+    setAssignedTo('test');
     setJobType('');
     setPhoneNumber('');
   };
@@ -164,7 +162,7 @@ export default function CalendarPage() {
         end: end.trim() === '' ? null : end,
         createdAt: selectedTask.createdAt,
         address: address.trim() || '',
-        assignedTo: assignedTo.trim() || '',
+        assignedTo: 'test',
         jobType: jobType.trim() || '',
         phoneNumber: phoneNumber.trim() || '',
       };
@@ -201,23 +199,19 @@ export default function CalendarPage() {
 
   const handleEventClick = (arg: EventClickArg) => {
     const task = tasks.find((t) => t.id === arg.event.id);
-    if (task) {
-      handleOpenModifyDialog(task);
-    }
+    if (task) handleOpenModifyDialog(task);
   };
 
   const renderEventContent = (eventInfo: {
     timeText: string;
     event: { title: string; extendedProps: any };
-  }) => {
-    return (
-      <>
-        <b>{eventInfo.timeText}</b> <i>{eventInfo.event.title}</i>
-        <br />
-        <small>{eventInfo.event.extendedProps.description}</small>
-      </>
-    );
-  };
+  }) => (
+    <>
+      <b>{eventInfo.timeText}</b> <i>{eventInfo.event.title}</i>
+      <br />
+      <small>{eventInfo.event.extendedProps.description}</small>
+    </>
+  );
 
   return (
     <div style={{ padding: '20px' }}>
@@ -287,15 +281,15 @@ export default function CalendarPage() {
             value={address}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddress(e.target.value)}
           />
-          <TextField
+          <InputLabel id="assignedTo-label">Assigned To</InputLabel>
+          <Select<string>
+            labelId="assignedTo-label"
             id="assignedTo"
-            name="assignedTo"
+            value="test"
             label="Assigned To"
-            fullWidth
-            variant="filled"
-            value={assignedTo}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAssignedTo(e.target.value)}
-          />
+          >
+            <MenuItem value="test">test</MenuItem>
+          </Select>
           <TextField
             id="jobType"
             name="jobType"
@@ -405,15 +399,15 @@ export default function CalendarPage() {
             value={address}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddress(e.target.value)}
           />
-          <TextField
+          <InputLabel id="assignedTo-label">Assigned To</InputLabel>
+          <Select<string>
+            labelId="assignedTo-label"
             id="assignedTo"
-            name="assignedTo"
+            value="test"
             label="Assigned To"
-            fullWidth
-            variant="filled"
-            value={assignedTo}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAssignedTo(e.target.value)}
-          />
+          >
+            <MenuItem value="test">test</MenuItem>
+          </Select>
           <TextField
             id="jobType"
             name="jobType"
