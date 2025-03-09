@@ -24,6 +24,11 @@ const NAVIGATION: Navigation = [
     title: 'Orders',
     icon: <ShoppingCartIcon />,
   },
+  {
+    segment: 'calendar',
+    title: 'Calendar',
+    icon: <ShoppingCartIcon />,
+  },
 ];
 
 const BRANDING = {
