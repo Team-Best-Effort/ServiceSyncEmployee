@@ -23,10 +23,14 @@ interface Task {
   id: string;
   title: string;
   description: string;
-  status: 'pending' | 'in-progress' | 'completed';
+  status: 'pending' | 'in-progress' | 'completed' | 'Assigned';
   start: string;
   end?: string | null;
   createdAt: string;
+  address: string;
+  assignedTo: string;
+  jobType: string;
+  phoneNumber: string;
 }
 
 export default function CalendarPage() {
@@ -36,9 +40,13 @@ export default function CalendarPage() {
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [status, setStatus] = useState<'pending' | 'in-progress' | 'completed'>('pending');
+  const [status, setStatus] = useState<'pending' | 'in-progress' | 'completed' | 'Assigned'>('pending');
   const [start, setStart] = useState<string>('');
   const [end, setEnd] = useState<string>('');
+  const [address, setAddress] = useState<string>('');
+  const [assignedTo, setAssignedTo] = useState<string>('');
+  const [jobType, setJobType] = useState<string>('');
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   useEffect(() => {
@@ -69,6 +77,10 @@ export default function CalendarPage() {
     setStatus('pending');
     setStart('');
     setEnd('');
+    setAddress('');
+    setAssignedTo('');
+    setJobType('');
+    setPhoneNumber('');
     setOpenAddDialog(true);
   };
 
@@ -79,6 +91,10 @@ export default function CalendarPage() {
     setStatus('pending');
     setStart('');
     setEnd('');
+    setAddress('');
+    setAssignedTo('');
+    setJobType('');
+    setPhoneNumber('');
   };
 
   const handleAddTask = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -95,6 +111,10 @@ export default function CalendarPage() {
         start,
         end: end.trim() === '' ? null : end,
         createdAt: new Date().toISOString(),
+        address: address.trim() || '',
+        assignedTo: assignedTo.trim() || '',
+        jobType: jobType.trim() || '',
+        phoneNumber: phoneNumber.trim() || '',
       };
       await set(newTaskRef, newTaskData);
       setTasks([...tasks, { id: newTaskRef.key!, ...newTaskData }]);
@@ -111,10 +131,13 @@ export default function CalendarPage() {
     setStatus(task.status);
     setStart(task.start);
     setEnd(task.end || '');
+    setAddress(task.address || '');
+    setAssignedTo(task.assignedTo || '');
+    setJobType(task.jobType || '');
+    setPhoneNumber(task.phoneNumber || '');
     setOpenModifyDialog(true);
   };
 
-  // Close modify dialog without clearing selectedTask so Delete dialog can use it.
   const handleCloseModifyDialog = () => {
     setOpenModifyDialog(false);
     setTitle('');
@@ -122,6 +145,10 @@ export default function CalendarPage() {
     setStatus('pending');
     setStart('');
     setEnd('');
+    setAddress('');
+    setAssignedTo('');
+    setJobType('');
+    setPhoneNumber('');
   };
 
   const handleModifyTask = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -136,6 +163,10 @@ export default function CalendarPage() {
         start,
         end: end.trim() === '' ? null : end,
         createdAt: selectedTask.createdAt,
+        address: address.trim() || '',
+        assignedTo: assignedTo.trim() || '',
+        jobType: jobType.trim() || '',
+        phoneNumber: phoneNumber.trim() || '',
       };
       await update(taskRef, updatedTaskData);
       const updatedTask: Task = { id: selectedTask.id, ...updatedTaskData };
@@ -146,7 +177,6 @@ export default function CalendarPage() {
     }
   };
 
-  // Transition to the Delete dialog without clearing selectedTask.
   const transitionToDeleteDialog = () => {
     setOpenModifyDialog(false);
     setOpenDeleteDialog(true);
@@ -154,8 +184,6 @@ export default function CalendarPage() {
 
   const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false);
-    // Optionally clear selectedTask here if desired:
-    // setSelectedTask(null);
   };
 
   const handleDeleteTask = async () => {
@@ -165,7 +193,6 @@ export default function CalendarPage() {
       await remove(taskRef);
       setTasks(tasks.filter((t) => t.id !== selectedTask.id));
       handleCloseDeleteDialog();
-      // Clear selectedTask after deletion.
       setSelectedTask(null);
     } catch (error) {
       console.error('Error deleting task:', error);
@@ -181,7 +208,7 @@ export default function CalendarPage() {
 
   const renderEventContent = (eventInfo: {
     timeText: string;
-    event: { title: string; extendedProps: { description: string; status: string } };
+    event: { title: string; extendedProps: any };
   }) => {
     return (
       <>
@@ -204,13 +231,19 @@ export default function CalendarPage() {
           title: task.title,
           start: task.start,
           end: task.end || undefined,
-          extendedProps: { description: task.description, status: task.status },
+          extendedProps: {
+            description: task.description,
+            status: task.status,
+            address: task.address,
+            assignedTo: task.assignedTo,
+            jobType: task.jobType,
+            phoneNumber: task.phoneNumber,
+          },
         }))}
         eventContent={renderEventContent}
         eventClick={handleEventClick}
       />
 
-      {/* Add Task Dialog */}
       <Dialog
         open={openAddDialog}
         onClose={handleCloseAddDialog}
@@ -245,6 +278,42 @@ export default function CalendarPage() {
             value={description}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
           />
+          <TextField
+            id="address"
+            name="address"
+            label="Address"
+            fullWidth
+            variant="filled"
+            value={address}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddress(e.target.value)}
+          />
+          <TextField
+            id="assignedTo"
+            name="assignedTo"
+            label="Assigned To"
+            fullWidth
+            variant="filled"
+            value={assignedTo}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAssignedTo(e.target.value)}
+          />
+          <TextField
+            id="jobType"
+            name="jobType"
+            label="Job Type"
+            fullWidth
+            variant="filled"
+            value={jobType}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setJobType(e.target.value)}
+          />
+          <TextField
+            id="phoneNumber"
+            name="phoneNumber"
+            label="Phone Number"
+            fullWidth
+            variant="filled"
+            value={phoneNumber}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhoneNumber(e.target.value)}
+          />
           <InputLabel id="status-label">Status</InputLabel>
           <Select
             labelId="status-label"
@@ -252,12 +321,13 @@ export default function CalendarPage() {
             value={status}
             label="Status"
             onChange={(e: SelectChangeEvent) =>
-              setStatus(e.target.value as 'pending' | 'in-progress' | 'completed')
+              setStatus(e.target.value as 'pending' | 'in-progress' | 'completed' | 'Assigned')
             }
           >
             <MenuItem value="pending">Pending</MenuItem>
             <MenuItem value="in-progress">In Progress</MenuItem>
             <MenuItem value="completed">Completed</MenuItem>
+            <MenuItem value="Assigned">Assigned</MenuItem>
           </Select>
           <TextField
             required
@@ -293,7 +363,6 @@ export default function CalendarPage() {
         </DialogActions>
       </Dialog>
 
-      {/* Modify Task Dialog */}
       <Dialog
         open={openModifyDialog}
         onClose={handleCloseModifyDialog}
@@ -327,6 +396,42 @@ export default function CalendarPage() {
             value={description}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
           />
+          <TextField
+            id="address"
+            name="address"
+            label="Address"
+            fullWidth
+            variant="filled"
+            value={address}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddress(e.target.value)}
+          />
+          <TextField
+            id="assignedTo"
+            name="assignedTo"
+            label="Assigned To"
+            fullWidth
+            variant="filled"
+            value={assignedTo}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAssignedTo(e.target.value)}
+          />
+          <TextField
+            id="jobType"
+            name="jobType"
+            label="Job Type"
+            fullWidth
+            variant="filled"
+            value={jobType}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setJobType(e.target.value)}
+          />
+          <TextField
+            id="phoneNumber"
+            name="phoneNumber"
+            label="Phone Number"
+            fullWidth
+            variant="filled"
+            value={phoneNumber}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhoneNumber(e.target.value)}
+          />
           <InputLabel id="status-label">Status</InputLabel>
           <Select
             labelId="status-label"
@@ -334,12 +439,13 @@ export default function CalendarPage() {
             value={status}
             label="Status"
             onChange={(e: SelectChangeEvent) =>
-              setStatus(e.target.value as 'pending' | 'in-progress' | 'completed')
+              setStatus(e.target.value as 'pending' | 'in-progress' | 'completed' | 'Assigned')
             }
           >
             <MenuItem value="pending">Pending</MenuItem>
             <MenuItem value="in-progress">In Progress</MenuItem>
             <MenuItem value="completed">Completed</MenuItem>
+            <MenuItem value="Assigned">Assigned</MenuItem>
           </Select>
           <TextField
             required
@@ -370,7 +476,6 @@ export default function CalendarPage() {
           />
         </DialogContent>
         <DialogActions>
-          {/* Transition to Delete dialog without clearing selectedTask */}
           <Button onClick={transitionToDeleteDialog} color="error">
             Delete
           </Button>
