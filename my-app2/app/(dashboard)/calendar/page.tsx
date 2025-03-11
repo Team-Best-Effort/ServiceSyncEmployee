@@ -15,7 +15,6 @@ import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
-import { Box } from '@mui/material';
 import { ref, set, get, child, update, remove } from 'firebase/database';
 import { db } from '../../../auth';
 
@@ -23,14 +22,10 @@ interface Task {
   id: string;
   title: string;
   description: string;
-  status: 'pending' | 'in-progress' | 'completed' | 'Assigned';
+  status: 'pending' | 'in-progress' | 'completed';
   start: string;
   end?: string | null;
   createdAt: string;
-  address: string;
-  assignedTo: string;
-  jobType: string;
-  phoneNumber: string;
 }
 
 export default function CalendarPage() {
@@ -40,13 +35,9 @@ export default function CalendarPage() {
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [status, setStatus] = useState<'pending' | 'in-progress' | 'completed' | 'Assigned'>('pending');
+  const [status, setStatus] = useState<'pending' | 'in-progress' | 'completed'>('pending');
   const [start, setStart] = useState<string>('');
   const [end, setEnd] = useState<string>('');
-  const [address, setAddress] = useState<string>('');
-  const [assignedTo, setAssignedTo] = useState<string>('');
-  const [jobType, setJobType] = useState<string>('');
-  const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   useEffect(() => {
@@ -77,11 +68,8 @@ export default function CalendarPage() {
     setStatus('pending');
     setStart('');
     setEnd('');
-    setAddress('');
-    setAssignedTo('test');
-    setJobType('');
-    setPhoneNumber('');
     setOpenAddDialog(true);
+
   };
 
   const handleCloseAddDialog = () => {
@@ -91,15 +79,12 @@ export default function CalendarPage() {
     setStatus('pending');
     setStart('');
     setEnd('');
-    setAddress('');
-    setAssignedTo('test');
-    setJobType('');
-    setPhoneNumber('');
   };
 
   const handleAddTask = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!start) return;
+
     try {
       const newTaskRef = ref(db, `ServiceSync/${Date.now().toString()}`);
       const newTaskData = {
@@ -109,10 +94,6 @@ export default function CalendarPage() {
         start,
         end: end.trim() === '' ? null : end,
         createdAt: new Date().toISOString(),
-        address: address.trim() || '',
-        assignedTo: 'test',
-        jobType: jobType.trim() || '',
-        phoneNumber: phoneNumber.trim() || '',
       };
       await set(newTaskRef, newTaskData);
       setTasks([...tasks, { id: newTaskRef.key!, ...newTaskData }]);
@@ -129,10 +110,6 @@ export default function CalendarPage() {
     setStatus(task.status);
     setStart(task.start);
     setEnd(task.end || '');
-    setAddress(task.address || '');
-    setAssignedTo('test');
-    setJobType(task.jobType || '');
-    setPhoneNumber(task.phoneNumber || '');
     setOpenModifyDialog(true);
   };
 
@@ -143,10 +120,6 @@ export default function CalendarPage() {
     setStatus('pending');
     setStart('');
     setEnd('');
-    setAddress('');
-    setAssignedTo('test');
-    setJobType('');
-    setPhoneNumber('');
   };
 
   const handleModifyTask = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -161,10 +134,6 @@ export default function CalendarPage() {
         start,
         end: end.trim() === '' ? null : end,
         createdAt: selectedTask.createdAt,
-        address: address.trim() || '',
-        assignedTo: 'test',
-        jobType: jobType.trim() || '',
-        phoneNumber: phoneNumber.trim() || '',
       };
       await update(taskRef, updatedTaskData);
       const updatedTask: Task = { id: selectedTask.id, ...updatedTaskData };
@@ -204,14 +173,16 @@ export default function CalendarPage() {
 
   const renderEventContent = (eventInfo: {
     timeText: string;
-    event: { title: string; extendedProps: any };
-  }) => (
-    <>
-      <b>{eventInfo.timeText}</b> <i>{eventInfo.event.title}</i>
-      <br />
-      <small>{eventInfo.event.extendedProps.description}</small>
-    </>
-  );
+    event: { title: string; extendedProps: { description: string; status: string } };
+  }) => {
+    return (
+      <>
+        <b>{eventInfo.timeText}</b> <i>{eventInfo.event.title}</i>
+        <br />
+        <small>{eventInfo.event.extendedProps.description}</small>
+      </>
+    );
+  };
 
   return (
     <div style={{ padding: '20px' }}>
@@ -225,14 +196,7 @@ export default function CalendarPage() {
           title: task.title,
           start: task.start,
           end: task.end || undefined,
-          extendedProps: {
-            description: task.description,
-            status: task.status,
-            address: task.address,
-            assignedTo: task.assignedTo,
-            jobType: task.jobType,
-            phoneNumber: task.phoneNumber,
-          },
+          extendedProps: { description: task.description, status: task.status },
         }))}
         eventContent={renderEventContent}
         eventClick={handleEventClick}
@@ -272,42 +236,6 @@ export default function CalendarPage() {
             value={description}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
           />
-          <TextField
-            id="address"
-            name="address"
-            label="Address"
-            fullWidth
-            variant="filled"
-            value={address}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddress(e.target.value)}
-          />
-          <InputLabel id="assignedTo-label">Assigned To</InputLabel>
-          <Select<string>
-            labelId="assignedTo-label"
-            id="assignedTo"
-            value="test"
-            label="Assigned To"
-          >
-            <MenuItem value="test">test</MenuItem>
-          </Select>
-          <TextField
-            id="jobType"
-            name="jobType"
-            label="Job Type"
-            fullWidth
-            variant="filled"
-            value={jobType}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setJobType(e.target.value)}
-          />
-          <TextField
-            id="phoneNumber"
-            name="phoneNumber"
-            label="Phone Number"
-            fullWidth
-            variant="filled"
-            value={phoneNumber}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhoneNumber(e.target.value)}
-          />
           <InputLabel id="status-label">Status</InputLabel>
           <Select
             labelId="status-label"
@@ -315,13 +243,12 @@ export default function CalendarPage() {
             value={status}
             label="Status"
             onChange={(e: SelectChangeEvent) =>
-              setStatus(e.target.value as 'pending' | 'in-progress' | 'completed' | 'Assigned')
+              setStatus(e.target.value as 'pending' | 'in-progress' | 'completed')
             }
           >
             <MenuItem value="pending">Pending</MenuItem>
             <MenuItem value="in-progress">In Progress</MenuItem>
             <MenuItem value="completed">Completed</MenuItem>
-            <MenuItem value="Assigned">Assigned</MenuItem>
           </Select>
           <TextField
             required
@@ -390,42 +317,6 @@ export default function CalendarPage() {
             value={description}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
           />
-          <TextField
-            id="address"
-            name="address"
-            label="Address"
-            fullWidth
-            variant="filled"
-            value={address}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddress(e.target.value)}
-          />
-          <InputLabel id="assignedTo-label">Assigned To</InputLabel>
-          <Select<string>
-            labelId="assignedTo-label"
-            id="assignedTo"
-            value="test"
-            label="Assigned To"
-          >
-            <MenuItem value="test">test</MenuItem>
-          </Select>
-          <TextField
-            id="jobType"
-            name="jobType"
-            label="Job Type"
-            fullWidth
-            variant="filled"
-            value={jobType}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setJobType(e.target.value)}
-          />
-          <TextField
-            id="phoneNumber"
-            name="phoneNumber"
-            label="Phone Number"
-            fullWidth
-            variant="filled"
-            value={phoneNumber}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhoneNumber(e.target.value)}
-          />
           <InputLabel id="status-label">Status</InputLabel>
           <Select
             labelId="status-label"
@@ -433,13 +324,12 @@ export default function CalendarPage() {
             value={status}
             label="Status"
             onChange={(e: SelectChangeEvent) =>
-              setStatus(e.target.value as 'pending' | 'in-progress' | 'completed' | 'Assigned')
+              setStatus(e.target.value as 'pending' | 'in-progress' | 'completed')
             }
           >
             <MenuItem value="pending">Pending</MenuItem>
             <MenuItem value="in-progress">In Progress</MenuItem>
             <MenuItem value="completed">Completed</MenuItem>
-            <MenuItem value="Assigned">Assigned</MenuItem>
           </Select>
           <TextField
             required
