@@ -29,6 +29,12 @@ const NAVIGATION: Navigation = [
     title: 'Calendar',
     icon: <ShoppingCartIcon />,
   },
+  {
+    segment: 'worksiteinfo',
+    title: 'Worksite Information',
+    icon: <ShoppingCartIcon />,
+  },
+
 ];
 
 const BRANDING = {
