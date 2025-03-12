@@ -15,7 +15,6 @@ import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
-import { Box } from '@mui/material';
 import { ref, set, get, child, update, remove } from 'firebase/database';
 import { db } from '../../../auth';
 
@@ -70,6 +69,7 @@ export default function CalendarPage() {
     setStart('');
     setEnd('');
     setOpenAddDialog(true);
+
   };
 
   const handleCloseAddDialog = () => {
@@ -83,9 +83,8 @@ export default function CalendarPage() {
 
   const handleAddTask = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!start) {
-      return;
-    }
+    if (!start) return;
+
     try {
       const newTaskRef = ref(db, `ServiceSync/${Date.now().toString()}`);
       const newTaskData = {
@@ -114,7 +113,6 @@ export default function CalendarPage() {
     setOpenModifyDialog(true);
   };
 
-  // Close modify dialog without clearing selectedTask so Delete dialog can use it.
   const handleCloseModifyDialog = () => {
     setOpenModifyDialog(false);
     setTitle('');
@@ -146,7 +144,6 @@ export default function CalendarPage() {
     }
   };
 
-  // Transition to the Delete dialog without clearing selectedTask.
   const transitionToDeleteDialog = () => {
     setOpenModifyDialog(false);
     setOpenDeleteDialog(true);
@@ -154,8 +151,6 @@ export default function CalendarPage() {
 
   const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false);
-    // Optionally clear selectedTask here if desired:
-    // setSelectedTask(null);
   };
 
   const handleDeleteTask = async () => {
@@ -165,7 +160,6 @@ export default function CalendarPage() {
       await remove(taskRef);
       setTasks(tasks.filter((t) => t.id !== selectedTask.id));
       handleCloseDeleteDialog();
-      // Clear selectedTask after deletion.
       setSelectedTask(null);
     } catch (error) {
       console.error('Error deleting task:', error);
@@ -174,9 +168,7 @@ export default function CalendarPage() {
 
   const handleEventClick = (arg: EventClickArg) => {
     const task = tasks.find((t) => t.id === arg.event.id);
-    if (task) {
-      handleOpenModifyDialog(task);
-    }
+    if (task) handleOpenModifyDialog(task);
   };
 
   const renderEventContent = (eventInfo: {
@@ -210,7 +202,6 @@ export default function CalendarPage() {
         eventClick={handleEventClick}
       />
 
-      {/* Add Task Dialog */}
       <Dialog
         open={openAddDialog}
         onClose={handleCloseAddDialog}
@@ -293,7 +284,6 @@ export default function CalendarPage() {
         </DialogActions>
       </Dialog>
 
-      {/* Modify Task Dialog */}
       <Dialog
         open={openModifyDialog}
         onClose={handleCloseModifyDialog}
@@ -370,7 +360,6 @@ export default function CalendarPage() {
           />
         </DialogContent>
         <DialogActions>
-          {/* Transition to Delete dialog without clearing selectedTask */}
           <Button onClick={transitionToDeleteDialog} color="error">
             Delete
           </Button>

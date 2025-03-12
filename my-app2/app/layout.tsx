@@ -34,7 +34,11 @@ const NAVIGATION: Navigation = [
     title: 'Worksite Information',
     icon: <ShoppingCartIcon />,
   },
-
+  {
+    segment: 'profile',
+    title: 'Profile',
+    icon: <ShoppingCartIcon />,
+  },
 ];
 
 const BRANDING = {
