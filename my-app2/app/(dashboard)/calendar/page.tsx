@@ -16,7 +16,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import { ref, set, get, child, update, remove } from 'firebase/database';
-import { db } from '../../../auth';
+import { db } from '../calendar/../editProfile/lib/firebase';
 
 interface Task {
   id: string;
