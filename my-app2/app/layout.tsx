@@ -8,41 +8,35 @@ import type { Navigation } from '@toolpad/core/AppProvider';
 import { SessionProvider, signIn, signOut } from 'next-auth/react';
 import { auth } from '../auth';
 import theme from '../theme';
+import { CalendarMonthRounded, HomeWorkRounded, ImportContactsRounded, ManageAccountsRounded } from '@mui/icons-material';
 
 const NAVIGATION: Navigation = [
-  {
-    kind: 'header',
-    title: 'Main items',
-  },
+
   {
     segment: '',
-    title: 'Dashboard',
-    icon: <DashboardIcon />,
-  },
-  {
-    segment: 'orders',
-    title: 'Orders',
-    icon: <ShoppingCartIcon />,
+    title: 'Home',
+    icon: <HomeWorkRounded />,
   },
   {
     segment: 'calendar',
     title: 'Calendar',
-    icon: <ShoppingCartIcon />,
+    icon: <CalendarMonthRounded />,
   },
   {
     segment: 'worksiteinfo',
     title: 'Worksite Information',
-    icon: <ShoppingCartIcon />,
+    icon: <ImportContactsRounded />,
   },
   {
     segment: 'profile',
     title: 'Profile',
-    icon: <ShoppingCartIcon />,
+    icon: <ManageAccountsRounded />,
   },
 ];
 
 const BRANDING = {
-  title: 'My Toolpad Core Next.js App',
+  title: 'ServiceSync',
+  logo: <img src="https://i.imgur.com/Qb4GvFV.png" alt="RRP logo" />,
 };
 
 

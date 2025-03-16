@@ -14,11 +14,12 @@ const BRANDING = {
 function DemoInfo() {
   return (
     <Alert
-    severity="info"
-    sx={{
+      severity="info"
+      sx={{
       boxShadow: '0 1px 12px #00c4cc',
       marginTop: '1rem',
-      borderRadius: '6px',
+      marginBottom: '1rem',
+      borderRadius: '4px',
       color: '#00c4cc',
       '& .MuiAlert-icon': {
         color: '#00c4cc',
@@ -26,94 +27,40 @@ function DemoInfo() {
       width: '100%',
       maxWidth: '500px',
      
-      justifyContent: 'center',
       alignItems: 'center',
       '& .MuiAlert-message': {
         textAlign: 'center',
+        textSizeAdjust: '80%',
         width: '100%',
+        padding: '0.2rem',
+        mr: '0.5rem',
       },
-    }}
-  >
-    Please log in with your credinetials
-  </Alert>
+      }}
+    >
+      <Typography>Please log in with your credentials</Typography>
+    </Alert>
   );
 }
 
 export default function SignIn() {
   return (
     <AppProvider branding={BRANDING} theme={theme}>
-      <Box
-        sx={{
-          display: 'flex', // Flexbox for side-by-side layout
-          flexDirection: 'row',
-          height: '100vh', // Changed from minHeight to height
-          width: '100%',
-          overflow: 'hidden', // Prevent scrolling
-        }}
-      >
-        {/* Left Side: Image (70%) with Title and Subtitle */}
         <Box
-          sx={{
-            flex: 0.65, // 65% of the width
-            backgroundImage: 'url("https://i.imgur.com/6eOmZ60.gif")',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            height: '100%', // Changed from minHeight to height
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            padding: '4rem',
-          }}
-        >
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '40%',
-              left: '10%',
-              color: '#ffffff',
-              textShadow: '1px 1px 4px rgb(36, 35, 35)',
-              textAlign: 'left',
-              textDecorationStyle: 'double',
           
-            }}
-          >
-            <Typography
-              variant="h2"
-              sx={{
-                fontWeight: 'bold',
-                marginBottom: '1rem',
-              }}
-            >
-             <span style={{ color: '#CBCECD' }}>Welcome to Service</span><span style={{ color: '#00c4cc' }}>Sync</span>
-            </Typography>
-            <Typography
-              variant="h6"
-              color="#CBCECD"
-              sx={{
-                fontWeight: 'light',
-              }}
-            >
-              Unify, Simplify, and Empower Your Business Operations
-            </Typography>
-          </Box>
-        </Box>
-
-        {/* Right Side: Form (30%) */}
-        <Box
           sx={{
-            flex: 0.45, // 45% of the width (adjusted to sum to 1 with 0.65)
+            flex: 1, 
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
             height: '100%', // Ensure it stays within parent height
-            padding: '4rem',
+            backgroundImage: 'url("https://i.imgur.com/k4JR04N.png")',
           
           }}
         >
 
           <SignInPage
+          
             signIn={signIn}
             providers={providerMap}
             slotProps={{ emailField: { autoFocus: false } }}
@@ -126,8 +73,10 @@ export default function SignIn() {
             sx={{
              
               '& form': {
-                padding: '2rem',
-                maxWidth: '800px',
+                display: 'flex',
+                flexDirection: 'column',
+                rowGap: '0.5rem',
+                maxWidth: '400px',
                 width: '100%',
            
               },
@@ -137,7 +86,7 @@ export default function SignIn() {
               
               },
               '& .MuiButton-root': {
-                padding: '0.75rem 1.5rem',
+              
                 borderRadius: '6px',
                 fontWeight: 'bold',
                 textTransform: 'none',
@@ -151,7 +100,7 @@ export default function SignIn() {
               '& .MuiTextField-root': {
                 width: '100%',
                 '& .MuiOutlinedInput-root': {
-                  borderRadius: '3px',
+               
                   '&:hover fieldset': {
                     borderColor: '#00c4cc',
                   },
@@ -163,7 +112,6 @@ export default function SignIn() {
             }}
           />
         </Box>
-      </Box>
     </AppProvider>
   );
 }
