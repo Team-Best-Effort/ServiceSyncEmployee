@@ -17,6 +17,7 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import { ref, set, get, child, update, remove } from 'firebase/database';
 import { db } from '../calendar/../editProfile/lib/firebase';
+import { useSession } from 'next-auth/react';
 
 interface Task {
   id: string;
@@ -26,6 +27,7 @@ interface Task {
   start: string;
   end?: string | null;
   createdAt: string;
+  createdBy: string;
 }
 
 export default function CalendarPage() {
@@ -38,13 +40,17 @@ export default function CalendarPage() {
   const [status, setStatus] = useState<'pending' | 'in-progress' | 'completed'>('pending');
   const [start, setStart] = useState<string>('');
   const [end, setEnd] = useState<string>('');
+  const [createdBy, setCreatedBy] = useState<string>('');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const { data: session } = useSession();
+
+  const username = session?.user?.name || 'Unknown User';
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
         const dbRef = ref(db);
-        const snapshot = await get(child(dbRef, 'ServiceSync'));
+        const snapshot = await get(child(dbRef, 'EmployeeCalendar'));
         if (snapshot.exists()) {
           const serviceSyncData = snapshot.val();
           const tasksList: Task[] = Object.entries(serviceSyncData).map(([key, value]) => ({
@@ -52,6 +58,10 @@ export default function CalendarPage() {
             ...(value as Omit<Task, 'id'>),
           }));
           setTasks(tasksList);
+          const filteredTasks = tasksList.filter(task => {
+            return task.createdBy === username;
+          });
+          setTasks(filteredTasks);
         } else {
           setTasks([]);
         }
@@ -68,8 +78,8 @@ export default function CalendarPage() {
     setStatus('pending');
     setStart('');
     setEnd('');
+    setCreatedBy('');
     setOpenAddDialog(true);
-
   };
 
   const handleCloseAddDialog = () => {
@@ -78,6 +88,7 @@ export default function CalendarPage() {
     setDescription('');
     setStatus('pending');
     setStart('');
+    setCreatedBy('');
     setEnd('');
   };
 
@@ -86,7 +97,7 @@ export default function CalendarPage() {
     if (!start) return;
 
     try {
-      const newTaskRef = ref(db, `ServiceSync/${Date.now().toString()}`);
+      const newTaskRef = ref(db, `EmployeeCalendar/${Date.now().toString()}`);
       const newTaskData = {
         title: title.trim() || 'Untitled',
         description: description.trim() || 'No description',
@@ -94,6 +105,7 @@ export default function CalendarPage() {
         start,
         end: end.trim() === '' ? null : end,
         createdAt: new Date().toISOString(),
+        createdBy: username
       };
       await set(newTaskRef, newTaskData);
       setTasks([...tasks, { id: newTaskRef.key!, ...newTaskData }]);
@@ -134,6 +146,7 @@ export default function CalendarPage() {
         start,
         end: end.trim() === '' ? null : end,
         createdAt: selectedTask.createdAt,
+        createdBy: selectedTask.createdBy
       };
       await update(taskRef, updatedTaskData);
       const updatedTask: Task = { id: selectedTask.id, ...updatedTaskData };
