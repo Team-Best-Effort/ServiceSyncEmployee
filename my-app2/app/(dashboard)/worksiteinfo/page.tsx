@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import {Box, Typography, List, ListItem,  ListItemText,  Dialog,  DialogTitle,  DialogContent,  DialogContentText,  DialogActions,  Button,} from '@mui/material';
+import {Box, Typography, List, ListItemButton,ListItem,  ListItemText,  Dialog,  DialogTitle,  DialogContent,  DialogContentText,  DialogActions,  Button,} from '@mui/material';
 import { ref, get, child } from 'firebase/database';
-import { db } from '../../../auth';
+import { db } from '../profile/lib/firebase';
+import { useSession } from 'next-auth/react';
 
 interface Task {
   id: string;
@@ -15,6 +16,8 @@ interface Task {
 }
 
 export default function WorksiteInfo() {
+  const { data: session } = useSession();
+
   const [tasks, setTasks] = useState<Task[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedWorksite, setSelectedWorksite] = useState<Task | null>(null);
@@ -31,7 +34,13 @@ export default function WorksiteInfo() {
             ...(value as Omit<Task, 'id'>),
           }));
 
-          setTasks(tasksList);
+          if (session?.user) {
+            const username = session.user.name || '';
+            const filteredTasks = tasksList.filter(task => task.assignedTo === username);
+            setTasks(filteredTasks);
+          } else {
+            setTasks([]);
+          }
         } else {
           setTasks([]);
         }
@@ -40,7 +49,7 @@ export default function WorksiteInfo() {
       }
     }
     fetchTasks();
-  }, []);
+  }, [session]);
 
   const handleWorksiteClick = (task: Task) => {
     setSelectedWorksite(task);
@@ -63,13 +72,12 @@ export default function WorksiteInfo() {
       ) : (
         <List>
           {tasks.map((task) => (
-            <ListItem button key={task.id} onClick={() => handleWorksiteClick(task)}>
+            <ListItem key={task.id}>
+  <ListItemButton onClick={() => handleWorksiteClick(task)}>
+    <ListItemText primary={task.address} secondary={`Assigned to: ${task.assignedTo}`} />
+  </ListItemButton>
+</ListItem>
 
-              <ListItemText
-                primary={task.address}
-                secondary={`Assigned to: ${task.assignedTo}`}
-              />
-            </ListItem>
           ))}
         </List>
       )}
@@ -92,22 +100,31 @@ export default function WorksiteInfo() {
               </DialogContentText>
 
               <Box sx={{ mt: 2, width: '100%', height: 300 }}>
-                <iframe
-                  title="Worksite Location"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  loading="lazy"
-                  allowFullScreen
-                  src={`https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${encodeURIComponent(
-                    selectedWorksite.address
-                  )}`}
-                />
-              </Box>
+              <iframe
+                title="Worksite Location"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                loading="lazy"
+                allowFullScreen
+                src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyB4zdZ-VvdPVG_2ajlD0F0M5LCK7Dl0hwk&q=${encodeURIComponent(selectedWorksite.address)}`}
+              />
+            </Box>
 
-              <Typography variant="body2" sx={{ mt: 2 }}>
-                Estimated Time of Arrival: <em>(Placeholder)</em>
-              </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ mt: 2 }}
+              onClick={() =>
+                window.open(
+                  `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(selectedWorksite.address)}`,
+                  '_blank'
+                )
+              }
+            >
+              Get Directions
+            </Button>
+
             </>
           )}
         </DialogContent>
