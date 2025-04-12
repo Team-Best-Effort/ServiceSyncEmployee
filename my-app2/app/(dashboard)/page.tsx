@@ -38,8 +38,8 @@ export default async function HomePage() {
           }}
         >
           <Avatar
-            src={user.avatar || "Hey"}
-            alt={user.name || "Hey"}
+            src={user.avatar || "Reload to display avatar"}
+            alt={user.name || "Reload to display name"}
             sx={{ width: 60, height: 60 }}
           />
           <Box>

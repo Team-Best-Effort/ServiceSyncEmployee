@@ -23,11 +23,13 @@ if (db.app.name != 'service_sync') {
 
 async function isAuthFirebase(email: string, password: string): Promise<boolean> {  
   try {
+    console.log('Verifying credentials are in firebase authentication.');
     const userCredential = await signInWithEmailAndPassword(diff_name_for_auth, email, password);
     const user = userCredential.user;
     
     // Make sure the person signing in is not an employee
     // Create a reference to the Authentication node
+    console.log('Verifying employee logging in is not an admin. Admins cannot log into employee web app.')
     const authRef = ref(db, 'Authentication');
 
     // Query where the 'email' child property equals the provided email
@@ -51,7 +53,7 @@ async function isAuthFirebase(email: string, password: string): Promise<boolean>
         }
       }
     } else {
-      console.error('snapshot.exists() returned false. Possibly the rdb database is not properly set up.'); // No matching email found
+      console.log('User logging in is an employee. Login success.'); // No matching email found
     }
 
     // If successful, return true (indicating authentication is successful)
