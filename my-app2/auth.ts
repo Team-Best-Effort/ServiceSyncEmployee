@@ -183,6 +183,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       // Fetch additional data for the user based on their ID or other properties
       const user1: User = await finduserInfo(userEmail);
 
+      if (user1.email ==='error' || user1.name === 'error'){
+        throw new Error('You are not authorized to login')
+      }
       // Add the additional data to the session object
       session.user.name = user1.name;
       session.user.image = user1.image;

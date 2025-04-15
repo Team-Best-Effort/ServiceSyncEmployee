@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import {Box, Typography, List, ListItemButton,ListItem,  ListItemText,  Dialog,  DialogTitle,  DialogContent,  DialogContentText,  DialogActions,  Button,} from '@mui/material';
-import { ref, get, child } from 'firebase/database';
+import { ref, get, child, set } from 'firebase/database';
 import { db } from '../profile/lib/firebase';
 import { useSession } from 'next-auth/react';
+import Loader from './Loader';
 
 interface Task {
   id: string;
@@ -13,6 +14,7 @@ interface Task {
   jobType: string;
   phoneNumber: string;
   status: string;
+  hoursWorked?: number;
 }
 
 export default function WorksiteInfo() {
@@ -21,6 +23,9 @@ export default function WorksiteInfo() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedWorksite, setSelectedWorksite] = useState<Task | null>(null);
+  const [hours, setHours] = useState<string>('');
+  const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState<string>('');
 
   useEffect(() => {
     async function fetchTasks() {
@@ -46,6 +51,8 @@ export default function WorksiteInfo() {
         }
       } catch (error) {
         console.error('Error fetching tasks:', error);
+      } finally{
+        setLoading(false);
       }
     }
     fetchTasks();
@@ -53,6 +60,11 @@ export default function WorksiteInfo() {
 
   const handleWorksiteClick = (task: Task) => {
     setSelectedWorksite(task);
+    if (task.hoursWorked){
+      setHours(task.hoursWorked.toString());
+    } else {
+      setHours('');
+    }    
     setOpenDialog(true);
   };
 
@@ -67,7 +79,9 @@ export default function WorksiteInfo() {
         Worksite Info
       </Typography>
 
-      {tasks.length === 0 ? (
+      {loading ? (
+        <Loader />
+      ) : tasks.length === 0 ? (
         <Typography>No worksites found.</Typography>
       ) : (
         <List>
@@ -125,6 +139,62 @@ export default function WorksiteInfo() {
               Get Directions
             </Button>
 
+            <Box>
+            <Typography>Hours Worked:</Typography>
+            <input type="number" value={hours} onChange={(e) => setHours(e.target.value)}
+              style={{
+                padding: '10px',
+                width: '100%',
+                marginTop: '10px',
+                marginBottom: '10px',
+                borderRadius: '10px',
+                fontSize: '15px',
+              }}/>
+
+            <Typography>Status:</Typography>
+            <select value={status} onChange={(e) => setStatus(e.target.value)}
+              style={{
+                padding: '10px',
+                width: '100%',
+                marginTop: '10px',
+                marginBottom: '10px',
+                borderRadius: '10px',
+                fontSize: '15px',
+              }}>
+                <option>Assigned</option>
+                <option>Work In Progress</option>
+                <option>Completed</option>
+                </select>
+            <Button onClick={async () =>{
+              if (selectedWorksite){
+                try {
+                  const dbRefhours = ref(db, `jobs/${selectedWorksite.id}/hoursWorked`);
+                  await set(dbRefhours, Number(hours));
+                  const dbRefstatus = ref(db, `jobs/${selectedWorksite.id}/status`);
+                  await set(dbRefstatus, status);
+
+
+                  const updatedWorksite = {
+                    id: selectedWorksite.id,
+                    address: selectedWorksite.address,
+                    assignedTo: selectedWorksite.assignedTo,
+                    jobType: selectedWorksite.jobType,
+                    phoneNumber: selectedWorksite.phoneNumber,
+                    status: status,
+                    hoursWorked: Number(hours),
+                  };
+                  setSelectedWorksite(updatedWorksite);
+                  setOpenDialog(false);
+
+                } catch (error){
+                  alert('Error occured while changing hours');
+                }
+            }}
+          }
+            >
+            Save
+            </Button>
+            </Box>
             </>
           )}
         </DialogContent>
