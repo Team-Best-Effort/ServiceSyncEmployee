@@ -8,22 +8,33 @@ import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
-import { ref, update, query, orderByChild, equalTo, get } from 'firebase/database';
-import { db } from './lib/firebase';
+import { auth, db } from './lib/firebase';
 import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
 import { styled } from '@mui/material/styles';
 import SaveIcon from '@mui/icons-material/Save';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
-import LinearProgress from '@mui/material/LinearProgress';
 import Loader from './Loader';
 import theme from '@/theme';
+import { get, ref, update } from 'firebase/database';
+import { signOut, signInWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth';
+
 
 interface UserData {
   name: string;
   image: string;
   email: string;
+  originalPassword?: string;
+  newPassword?: string;
+}
+
+interface Employee {
+  employeeID: string;
+  email: string;
+  name: string;
+  passwordChanged: boolean;
+  phone: string;
 }
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -74,9 +85,11 @@ export default function EditProfilePage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [passwordChanged, setPasswordChanged] = useState<boolean>(false);
+  const [employeeID, setEmployeeID] = useState<string | null>(null); 
+  const [dataLoading, setDataLoading] = useState<boolean>(true); 
 
-  
   useEffect(() => {
     if (session?.user) {
       setUserData({
@@ -89,15 +102,34 @@ export default function EditProfilePage() {
       const timer = setTimeout(() => {
         setIsLoading(false);
       }, 800);
-  
+
       return () => clearTimeout(timer);
     }
   }, [session]);
-  
-    // Display loader while loading
-    if (isLoading) {
-      return <Loader size={60} color={theme.palette.primary.main} />; // Use theme primary color for loader
+
+  useEffect(() => {
+    if (session?.user?.email){
+      const fetchUserData = async () =>{
+        const userRef = ref(db, `employees`);
+        const snapshot = await get(userRef);
+        if (snapshot.exists()) {
+          const users: {[key: string]: Employee} = snapshot.val(); 
+          const currentUser = Object.values(users).find((user: Employee) => user.email === session?.user?.email);
+
+          if (currentUser){
+            setEmployeeID(currentUser.employeeID);
+            setPasswordChanged(currentUser.passwordChanged || false); 
+          }
+        }
+        setDataLoading(false); 
+      };
+      fetchUserData();
     }
+  }, [session]);
+
+  if (isLoading || dataLoading) { 
+    return <Loader size={60} color={theme.palette.primary.main} />;
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -109,38 +141,51 @@ export default function EditProfilePage() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!session?.user?.email) return;
-
+    if (passwordChanged && !userData.image) return; 
     setLoading(true);
     setError(null);
     setSuccess(false);
 
-    try {
-      const authRef = ref(db, 'Authentication');
-      const authQuery = query(
-        authRef,
-        orderByChild('email'),
-        equalTo(session.user.email)
-      );
+    try{
+      if (!passwordChanged && userData.originalPassword && userData.newPassword) {
+        await signOut(auth);
 
-      const snapshot = await get(authQuery);
-      if (snapshot.exists()) {
-        const userKey = Object.keys(snapshot.val())[0];
-        const userRef = ref(db, `Authentication/${userKey}`);
+        if (session?.user?.email){
+          await signInWithEmailAndPassword(auth, session.user.email, userData.originalPassword);
+        }
 
-        await update(userRef, {
-          name: userData.name,
-          image: userData.image,
-          email: userData.email,
-        });
+        const currentUser = auth.currentUser;
+        if (!currentUser || !currentUser.email){
+          throw new Error('User not authenticated with Firebase');
+        }
+        const credential = EmailAuthProvider.credential(
+          currentUser.email,
+          userData.originalPassword
+        );
+
+        await reauthenticateWithCredential(currentUser, credential);
+        await updatePassword(currentUser, userData.newPassword);
 
         setSuccess(true);
-      } else {
-        throw new Error('User not found in database');
+        setPasswordChanged(true);
+
+        if (employeeID){
+          const userRef = ref(db,`employees/${employeeID}`);
+          await update(userRef,{passwordChanged: true});
+        }
       }
+
+      if (userData.image){
+        const userRef = ref(db,`employees/${employeeID}`);
+        await update(userRef,{image: userData.image});
+      }
+      setSuccess(true);
     } catch (err) {
-      console.warn('Profile update failed. Please check your connection and try again.');
-      setError(err instanceof Error ? err.message : 'Something went wrong. Try again.');
+      if (err instanceof Error){
+        setError(err.message);
+      } else{
+        setError('An unknown error occurred.');
+      }
     } finally {
       setLoading(false);
     }
@@ -152,20 +197,27 @@ export default function EditProfilePage() {
         <Box component="form" onSubmit={handleSubmit}>
           <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
             <StyledAvatar
-              src={userData.image}
-              alt={userData.name}
-            >
+             src={userData.image} 
+             alt={userData.name}
+             >
               {!userData.image && userData.name.charAt(0).toUpperCase()}
             </StyledAvatar>
           </Box>
 
-          <TextField fullWidth label="Name" name="name" value={userData.name} onChange={handleChange} required variant="outlined" sx={{ margin: '16px' }} />
+          <TextField fullWidth label="Name" name="name" value={userData.name} onChange={handleChange} required variant="outlined" sx={{ margin: '16px' }} inputProps={{ readOnly: true }} />
           <TextField fullWidth label="Profile Image URL" name="image" value={userData.image} onChange={handleChange} variant="outlined" helperText="Enter a valid image URL" sx={{ margin: '16px' }} />
-          <TextField fullWidth label="Email" name="email" value={userData.email} onChange={handleChange} required variant="outlined" sx={{ margin: '16px' }} />
+          <TextField fullWidth label="Email" name="email" value={userData.email} onChange={handleChange} required variant="outlined" sx={{ margin: '16px' }} inputProps={{ readOnly: true }} />
 
+          {!passwordChanged && (
+            <div>
+              <TextField fullWidth type="password" label="Original Password" name="originalPassword" value={userData.originalPassword || ''} onChange={handleChange} variant="outlined" sx={{ margin: '16px' }} />
+              <TextField fullWidth type="password" label="New Password" name="newPassword" value={userData.newPassword || ''} onChange={handleChange} variant="outlined" sx={{ margin: '16px' }} />
+            </div>
+          )}
 
-          {error && <Alert severity="error">⚠️ {error}</Alert>}
-          {success && <Alert severity="success">Profile updated successfully! Please logout and login if you changed your email!</Alert>}
+          {success && (<Alert severity="success" sx={{ mt: 2 }}> Changes saved successfully!</Alert>)}
+
+          {error && (<Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>)}
 
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
             <StyledButton type="submit" variant="contained" disabled={loading} startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <SaveIcon />}>
