@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import {Box, Typography, List, ListItemButton,ListItem,  ListItemText,  Dialog,  DialogTitle,  DialogContent,  DialogContentText,  DialogActions,  Button,} from '@mui/material';
 import { ref, get, child, set } from 'firebase/database';
 import { db } from '../profile/lib/firebase';
-import { useSession } from 'next-auth/react';
+import { useSession, getSession } from 'next-auth/react';
 import Loader from './Loader';
 
 interface Task {
@@ -26,6 +26,16 @@ export default function WorksiteInfo() {
   const [hours, setHours] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState<string>('');
+
+  useEffect(() => {
+    const refreshSessionIfNeeded = async () => {
+      if (!session?.user?.name) {
+        await getSession();
+      }
+    };
+
+    refreshSessionIfNeeded();
+  }, [session]);
 
   useEffect(() => {
     async function fetchTasks() {
