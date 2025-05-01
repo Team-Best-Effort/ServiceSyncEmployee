@@ -45,6 +45,7 @@ const mockSession = {
     name: 'Test User',
     email: 'test@example.com',
     image: 'https://example.com/avatar.jpg',
+    passwordChanged: false
   },
   expires: 'fake-expiry',
 };
@@ -87,6 +88,26 @@ describe('EditProfilePage', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/Changes saved successfully!/i)).toBeInTheDocument();
+    });
+  });
+
+  it('tests to see if password fields show up when passwordChanged is false', async () => {
+    mockSession.user.passwordChanged = false;
+    renderWithSession();
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Original Password/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/New Password/i)).toBeInTheDocument();
+    });
+  });
+
+  it('tests to see if password fields show up when passwordChanged is true', async () => {
+    mockSession.user.passwordChanged = true;
+    renderWithSession();
+
+    await waitFor(() => {
+      expect(screen.queryByLabelText(/Original Password/i)).not.toBeInTheDocument();
+      expect(screen.queryByLabelText(/New Password/i)).not.toBeInTheDocument();
     });
   });
 });

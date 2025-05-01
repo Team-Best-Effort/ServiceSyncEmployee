@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import {Box, Typography, List, ListItemButton,ListItem,  ListItemText,  Dialog,  DialogTitle,  DialogContent,  DialogContentText,  DialogActions,  Button,} from '@mui/material';
-import { ref, get, child, set } from 'firebase/database';
+import { ref, get, child, set, update } from 'firebase/database';
 import { db } from '../profile/lib/firebase';
 import { useSession, getSession } from 'next-auth/react';
 import Loader from './Loader';
@@ -74,7 +74,7 @@ export default function WorksiteInfo() {
       setHours(task.hoursWorked.toString());
     } else {
       setHours('');
-    }    
+    }
     setOpenDialog(true);
   };
 
@@ -97,11 +97,10 @@ export default function WorksiteInfo() {
         <List>
           {tasks.map((task) => (
             <ListItem key={task.id}>
-  <ListItemButton onClick={() => handleWorksiteClick(task)}>
-    <ListItemText primary={task.address} secondary={`Assigned to: ${task.assignedTo}`} />
-  </ListItemButton>
-</ListItem>
-
+              <ListItemButton onClick={() => handleWorksiteClick(task)}>
+                <ListItemText primary={task.address} secondary={`Assigned to: ${task.assignedTo}`} />
+              </ListItemButton>
+            </ListItem>
           ))}
         </List>
       )}
@@ -124,34 +123,34 @@ export default function WorksiteInfo() {
               </DialogContentText>
 
               <Box sx={{ mt: 2, width: '100%', height: 300 }}>
-              <iframe
-                title="Worksite Location"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                loading="lazy"
-                allowFullScreen
-                src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyB4zdZ-VvdPVG_2ajlD0F0M5LCK7Dl0hwk&q=${encodeURIComponent(selectedWorksite.address)}`}
-              />
-            </Box>
+                <iframe
+                  title="Worksite Location"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  allowFullScreen
+                  src={`https://www.google.com/maps/embed/v1/search?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(selectedWorksite.address)}`}
+                />
+              </Box>
 
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ mt: 2 }}
-              onClick={() =>
-                window.open(
-                  `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(selectedWorksite.address)}`,
-                  '_blank'
-                )
-              }
-            >
-              Get Directions
-            </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ mt: 2 }}
+                onClick={() =>
+                  window.open(
+                    `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(selectedWorksite.address)}`,
+                    '_blank'
+                  )
+                }
+              >
+                Get Directions
+              </Button>
 
-            <Box>
-            <Typography>Hours Worked:</Typography>
-            <input type="number" value={hours} onChange={(e) => setHours(e.target.value)}
+              <Box>
+                <Typography>Hours Worked:</Typography>
+                <input type="number" value={hours} onChange={(e) => setHours(e.target.value)}
               style={{
                 padding: '10px',
                 width: '100%',
@@ -176,35 +175,40 @@ export default function WorksiteInfo() {
                 <option>Completed</option>
                 </select>
             <Button onClick={async () =>{
-              if (selectedWorksite){
-                try {
-                  const dbRefhours = ref(db, `jobs/${selectedWorksite.id}/hoursWorked`);
-                  await set(dbRefhours, Number(hours));
-                  const dbRefstatus = ref(db, `jobs/${selectedWorksite.id}/status`);
-                  await set(dbRefstatus, status);
+                    if (selectedWorksite){
+                      try {
+                        const updatedWorksite = {
+                          id: selectedWorksite.id,
+                          address: selectedWorksite.address,
+                          assignedTo: selectedWorksite.assignedTo,
+                          jobType: selectedWorksite.jobType,
+                          phoneNumber: selectedWorksite.phoneNumber,
+                          status: status,
+                          hoursWorked: Number(hours),
+                        };
+                        setSelectedWorksite(updatedWorksite);
+                        setTasks((prevTasks) =>
+                          prevTasks.map((task) =>
+                            task.id === selectedWorksite.id ? updatedWorksite : task
+                          )
+                        );
 
+                        const updates: { [key: string]: string | number } = {};
+                        updates[`jobs/${selectedWorksite.id}/hoursWorked`] = Number(hours);
+                        updates[`jobs/${selectedWorksite.id}/status`] = status;
 
-                  const updatedWorksite = {
-                    id: selectedWorksite.id,
-                    address: selectedWorksite.address,
-                    assignedTo: selectedWorksite.assignedTo,
-                    jobType: selectedWorksite.jobType,
-                    phoneNumber: selectedWorksite.phoneNumber,
-                    status: status,
-                    hoursWorked: Number(hours),
-                  };
-                  setSelectedWorksite(updatedWorksite);
-                  setOpenDialog(false);
+                        await update(ref(db), updates);
 
-                } catch (error){
-                  alert('Error occured while changing hours');
-                }
-            }}
-          }
-            >
-            Save
-            </Button>
-            </Box>
+                        setOpenDialog(false);
+                      } catch (error){
+                        alert('Error occured while changing hours');
+                      }
+                    }}
+                  }
+                >
+                  Save
+                </Button>
+              </Box>
             </>
           )}
         </DialogContent>
