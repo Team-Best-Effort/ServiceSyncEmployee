@@ -8,7 +8,7 @@ import * as firebase from 'firebase/database';
 vi.mock('next-auth/react', () => ({
   useSession: vi.fn(() => ({
     data: {
-      user: { 
+      user: {
         name: 'Test User',
         email: 'test@example.com'
       },
@@ -22,6 +22,7 @@ vi.mock('next-auth/react', () => ({
 vi.mock('firebase/database', () => ({
   ref: vi.fn((db, path) => ({ db, path, key: path?.split('/')[1] || Date.now().toString() })),
   set: vi.fn().mockResolvedValue(undefined),
+  update: vi.fn().mockResolvedValue(undefined),
   get: vi.fn(),
   child: vi.fn(ref => ref),
   db: {}
@@ -57,12 +58,12 @@ describe('WorksiteInfo Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     vi.mocked(firebase.get).mockResolvedValue({
       exists: () => true,
       val: () => mockTasks
     } as any);
-    
+
     vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
@@ -72,24 +73,24 @@ describe('WorksiteInfo Component', () => {
 
   it('renders the worksite info page with tasks', async () => {
     render(<WorksiteInfo />);
-    
+
     await waitFor(() => {
       expect(firebase.get).toHaveBeenCalled();
     });
-    
+
     expect(screen.getByText('Worksite Info')).toBeInTheDocument();
-    
+
     expect(screen.getByText('123 Main St')).toBeInTheDocument();
     expect(screen.getByText('456 Oak Ave')).toBeInTheDocument();
   });
 
   it('opens dialog when clicking on a worksite', async () => {
     render(<WorksiteInfo />);
-    
+
     await waitFor(() => {
       expect(firebase.get).toHaveBeenCalled();
     });
-    
+
     fireEvent.click(screen.getByText('123 Main St'));
     
     expect(screen.getByText('Worksite Details')).toBeInTheDocument();
@@ -104,45 +105,46 @@ describe('WorksiteInfo Component', () => {
 
   it('updates hours worked and status', async () => {
     render(<WorksiteInfo />);
-    
+
     await waitFor(() => {
       expect(firebase.get).toHaveBeenCalled();
     });
-    
+
     fireEvent.click(screen.getByText('123 Main St'));
-    
+
     const hoursInput = screen.getByRole('spinbutton');
     fireEvent.change(hoursInput, { target: { value: '5' } });
-    
+
     const statusSelect = screen.getByRole('combobox');
     fireEvent.change(statusSelect, { target: { value: 'Completed' } });
-    
+
     fireEvent.click(screen.getByText('Save'));
-    
+
     await waitFor(() => {
-      expect(firebase.set).toHaveBeenCalledWith(
+      expect(firebase.update).toHaveBeenCalledTimes(1);
+
+      expect(firebase.update).toHaveBeenCalledWith(
         expect.anything(),
-        5
-      );
-      expect(firebase.set).toHaveBeenCalledWith(
-        expect.anything(),
-        'Completed'
+        {
+          'jobs/task1/hoursWorked': 5,
+          'jobs/task1/status': 'Completed'
+        }
       );
     });
   });
 
   it('handles Firebase fetch errors gracefully', async () => {
     vi.mocked(firebase.get).mockRejectedValue(new Error('Firebase connection error'));
-    
+
     render(<WorksiteInfo />);
-    
+
     await waitFor(() => {
       expect(console.error).toHaveBeenCalledWith(
         'Error fetching tasks:',
         expect.any(Error)
       );
     });
-    
+
     expect(screen.getByText('No worksites found.')).toBeInTheDocument();
   });
 
@@ -153,4 +155,4 @@ describe('WorksiteInfo Component', () => {
     
     expect(screen.getByTestId('loader')).toBeInTheDocument();
   });
-}); 
+});
